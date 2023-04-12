@@ -5,4 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 include(CTest)
 add_subdirectory(tests)
 
-add_library(cli INTERFACE "include/cliparse/Command.hpp" "include/cliparse/Argument.hpp")
+if (CLIPARSE_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+add_library(cli INTERFACE "include/cliparse.hpp")

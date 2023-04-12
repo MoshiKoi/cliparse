@@ -109,22 +109,23 @@ class Usage : public UsageBase {
 		// clang-format off
 		auto const actual_vals = std::apply(
 		    [&](auto &&...argument) {
-			    return std::make_tuple(
-			        std::invoke(details::overloaded {
-						[&]<class T>(Argument<T> const &arg) {
-							auto const res = arg.parse(*positional_argument_iter);
-							++positional_argument_iter;
-							return res;
-						},
-						[&]<class T>(Option<T> const &opt) {
-							auto const res = option_arguments.find(opt.get_name());
-							if (res == std::end(option_arguments)) {
-								return opt.get_default_value();
-							} else {
-								return opt.parse(res->second);
-							}
+				auto results = std::tuple{std::invoke(details::overloaded {
+					[&]<class T>(Argument<T> const &arg) {
+						auto const res = arg.parse(*positional_argument_iter);
+						++positional_argument_iter;
+						return res;
+					},
+					[&]<class T>(Option<T> const &opt) {
+						auto const res = option_arguments.find(opt.get_name());
+						if (res == std::end(option_arguments)) {
+							return opt.get_default_value();
+						} else {
+							return opt.parse(res->second);
 						}
-					}, argument)...);
+					}
+				}, argument)...};
+
+			    return results;
 		    }, _args);
 		// clang-format on
 
