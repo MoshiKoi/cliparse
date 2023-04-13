@@ -2,26 +2,22 @@
 #ifndef OPTION_HPP
 #define OPTION_HPP
 
-#include <string>
+#include "common.hpp"
 
 namespace cli {
 
 template <class T> class Option {
-	using ret_type = T;
-};
-
-template <> class Option<char const *> {
 	std::string _name, _description;
 	char const *_default_value;
 
   public:
-	using ret_type = char const *;
+	using ret_type = T;
 
 	Option(std::string const &name, std::string const &description, char const *default_value)
 	    : _name{name}, _description{description}, _default_value{default_value} {}
 
 	std::string get_name() const { return _name; }
-	char const *parse(char const *value) const { return value; }
+	T parse(char const *value) const { return argument_parse<T>(value); }
 	char const *get_default_value() const { return _default_value; }
 };
 
