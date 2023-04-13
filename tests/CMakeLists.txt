@@ -4,11 +4,13 @@ add_executable(trivial_program trivial_program.cpp)
 add_executable(one_argument_program one_argument_program.cpp)
 add_executable(one_option_program one_option_program.cpp)
 add_executable(one_flag_program one_flag_program.cpp)
+add_executable(subcommands_program subcommands_program.cpp)
 
 target_link_libraries(trivial_program INTERFACE cli)
 target_link_libraries(one_argument_program INTERFACE cli)
 target_link_libraries(one_option_program INTERFACE cli)
 target_link_libraries(one_flag_program INTERFACE cli)
+target_link_libraries(subcommands_program INTERFACE cli)
 
 add_test(NAME "Test trivial program with 0 arguments" COMMAND trivial_program)
 add_test(NAME "Test trivial program with 1 argument" COMMAND trivial_program first_argument)
@@ -18,6 +20,9 @@ add_test(NAME "Test one option program with 0 options" COMMAND one_option_progra
 add_test(NAME "Test one option program with 1 options" COMMAND one_option_program --opt first_option)
 add_test(NAME "Test one flag program with no flag" COMMAND one_flag_program)
 add_test(NAME "Test one flag program with flag" COMMAND one_flag_program --flag)
+add_test(NAME "Test existing subcommand of program" COMMAND subcommands_program subcommand)
+add_test(NAME "Test nonexistant subcommand of program" COMMAND subcommands_program not_subcommand)
 
 set_property(TEST "Test trivial program with 1 argument" PROPERTY WILL_FAIL true)
 set_property(TEST "Test one argument program with 0 arguments" PROPERTY WILL_FAIL true)
+set_property(TEST "Test nonexistant subcommand of program" PROPERTY WILL_FAIL true)
