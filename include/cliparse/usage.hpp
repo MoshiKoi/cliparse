@@ -62,7 +62,7 @@ class Usage : public UsageBase {
 		(std::invoke(
 			details::overloaded {
 				[&]<class T>(Option<T> const &opt) { _option_names.emplace_back(opt.get_name()); },
-				[&]<class T>(Option<bool> const &opt) { _flag_names.emplace_back(opt.get_name()); },
+				[&](Option<bool> const &opt) { _flag_names.emplace_back(opt.get_name()); },
 				[&]<class T>(Argument<T> const &) { ++_num_pos_args; }
 			}, args),...);
 		// clang-format on
