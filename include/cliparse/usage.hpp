@@ -57,7 +57,7 @@ class Usage : public UsageBase {
 	std::vector<std::string> _flag_names;
 
   public:
-	Usage(Fn fn, Args... args) : _fn{fn}, _args{args...}, _flag_names{}, _option_names{}, _num_pos_args{0} {
+	Usage(Fn fn, Args... args) : _fn{fn}, _args{args...}, _num_pos_args{0}, _option_names{}, _flag_names{} {
 		// clang-format off
 		(std::invoke(
 			details::overloaded {
