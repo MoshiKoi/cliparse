@@ -24,7 +24,7 @@ if (CLIPARSE_INSTALL)
         INCLUDES DESTINATION include
     )
 
-    install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(DIRECTORY include DESTINATION .)
 
     install(
         EXPORT cliparseTargets
