@@ -1,5 +1,4 @@
 #pragma once
-#include <utility>
 #ifndef COMMAND_HPP
 #define COMMAND_HPP
 
@@ -8,6 +7,7 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "usage.hpp"
@@ -21,10 +21,10 @@ class Command {
 
   public:
 	Command(std::string const &name, std::string const &description)
-	    : _name{name}, _description{description}, _usages{}, _subcommands{} {}
+		: _name{name}, _description{description}, _usages{}, _subcommands{} {}
 
 	template <class Fn, class... Args>
-	    requires std::is_invocable_r_v<int, Fn, typename Args::ret_type...>
+		requires std::is_invocable_r_v<int, Fn, typename Args::ret_type...>
 	void add_usage(Fn fn, Args... args) {
 		_usages.emplace_back(std::make_unique<Usage<Fn, Args...>>(fn, args...));
 	}

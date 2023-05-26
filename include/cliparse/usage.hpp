@@ -20,11 +20,13 @@ namespace cli {
 
 namespace details {
 
-template <class... Ts> struct overloaded : Ts... {
+template <class... Ts>
+struct overloaded : Ts... {
 	using Ts::operator()...;
 };
 
-template <class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+template <class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
 
 template <class T>
 inline std::tuple<>
@@ -48,7 +50,7 @@ class UsageBase {
 };
 
 template <class Fn, class... Args>
-    requires std::is_invocable_r_v<int, Fn, typename Args::ret_type...>
+	requires std::is_invocable_r_v<int, Fn, typename Args::ret_type...>
 class Usage : public UsageBase {
 	Fn _fn;
 	std::tuple<Args...> _args;
@@ -58,14 +60,13 @@ class Usage : public UsageBase {
 
   public:
 	Usage(Fn fn, Args... args) : _fn{fn}, _args{args...}, _num_pos_args{0}, _option_names{}, _flag_names{} {
-		// clang-format off
 		(std::invoke(
-			details::overloaded {
-				[&]<class T>(Option<T> const &opt) { _option_names.emplace_back(opt.get_name()); },
-				[&](Option<bool> const &opt) { _flag_names.emplace_back(opt.get_name()); },
-				[&]<class T>(Argument<T> const &) { ++_num_pos_args; }
-			}, args),...);
-		// clang-format on
+			 details::overloaded{
+				 [&]<class T>(Option<T> const &opt) { _option_names.emplace_back(opt.get_name()); },
+				 [&](Option<bool> const &opt) { _flag_names.emplace_back(opt.get_name()); },
+				 [&]<class T>(Argument<T> const &) { ++_num_pos_args; }},
+			 args),
+		 ...);
 	}
 
 	std::function<int(void)> parse_execution(int argc, char const *const *argv) const override {
@@ -106,28 +107,28 @@ class Usage : public UsageBase {
 
 		auto positional_argument_iter = std::begin(positional_arguments);
 
-		// clang-format off
 		auto const actual_vals = std::apply(
-		    [&](auto &&...argument) {
-				auto results = std::tuple{std::invoke(details::overloaded {
-					[&]<class T>(Argument<T> const &arg) {
-						auto const res = arg.parse(*positional_argument_iter);
-						++positional_argument_iter;
-						return res;
-					},
-					[&]<class T>(Option<T> const &opt) {
-						auto const res = option_arguments.find(opt.get_name());
-						if (res == std::end(option_arguments)) {
-							return opt.get_default_value();
-						} else {
-							return opt.parse(res->second);
-						}
-					}
-				}, argument)...};
+			[&](auto &&...argument) {
+				auto results = std::tuple{std::invoke(
+					details::overloaded{
+						[&]<class T>(Argument<T> const &arg) {
+							auto const res = arg.parse(*positional_argument_iter);
+							++positional_argument_iter;
+							return res;
+						},
+						[&]<class T>(Option<T> const &opt) {
+							auto const res = option_arguments.find(opt.get_name());
+							if (res == std::end(option_arguments)) {
+								return opt.get_default_value();
+							} else {
+								return opt.parse(res->second);
+							}
+						}},
+					argument)...};
 
-			    return results;
-		    }, _args);
-		// clang-format on
+				return results;
+			},
+			_args);
 
 		return [=]() { return std::apply(_fn, actual_vals); };
 	}

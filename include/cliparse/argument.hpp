@@ -6,7 +6,8 @@
 
 namespace cli {
 
-template <class T> class Argument {
+template <class T>
+class Argument {
 	std::string _name, _description;
 
   public:
@@ -20,9 +21,11 @@ template <class T> class Argument {
 
 namespace details {
 
-template <class> struct is_argument_type : public std::false_type {};
+template <class>
+struct is_argument_type : public std::false_type {};
 
-template <class T> struct is_argument_type<Argument<T>> : public std::true_type {};
+template <class T>
+struct is_argument_type<Argument<T>> : public std::true_type {};
 
 } // namespace details
 

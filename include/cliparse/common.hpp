@@ -12,11 +12,13 @@ namespace cli {
 
 class ArgumentException : public std::exception {};
 
-template <class T> T argument_parse(char const *);
+template <class T>
+T argument_parse(char const *);
 
 template <class T>
 	requires std::is_constructible_v<T, char const *>
-T argument_parse(char const * value) {
+T
+argument_parse(char const *value) {
 	return T{value};
 }
 
@@ -32,6 +34,6 @@ argument_parse(char const *value) {
 	return result;
 }
 
-}
+} // namespace cli
 
 #endif
