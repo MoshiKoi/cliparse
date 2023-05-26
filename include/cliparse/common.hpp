@@ -24,9 +24,9 @@ argument_parse(char const *value) {
 
 template <class T>
 	requires std::is_integral_v<T> || std::is_floating_point_v<T>
-inline T
+T
 argument_parse(char const *value) {
-	int result;
+	T result;
 	std::string_view view{value};
 	auto [_, ec] = std::from_chars(view.data(), view.data() + view.size(), result);
 	if (ec != std::errc())
