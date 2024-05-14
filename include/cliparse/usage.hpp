@@ -28,18 +28,6 @@ struct overloaded : Ts... {
 template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-template <class T>
-inline std::tuple<>
-something(T arg) {
-	return {};
-}
-
-template <class T>
-inline std::tuple<Option<T>>
-something(Option<T> arg) {
-	return std::make_tuple(arg);
-}
-
 } // namespace details
 
 class UsageBase {
@@ -54,7 +42,7 @@ template <class Fn, class... Args>
 class Usage : public UsageBase {
 	Fn _fn;
 	std::tuple<Args...> _args;
-	int _num_pos_args;
+	std::size_t _num_pos_args;
 	std::vector<std::string> _option_names;
 	std::vector<std::string> _flag_names;
 
@@ -130,7 +118,7 @@ class Usage : public UsageBase {
 			},
 			_args);
 
-		return [=]() { return std::apply(_fn, actual_vals); };
+		return [=, this]() { return std::apply(_fn, actual_vals); };
 	}
 };
 
